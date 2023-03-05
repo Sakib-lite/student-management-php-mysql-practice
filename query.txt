@@ -1,0 +1,89 @@
+CREATE TABLE students(
+    student_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    student_name VARCHAR(255) NOT NULL,
+    student_email VARCHAR(255) NOT NULL,
+    student_mobile VARCHAR(255) NOT NULL,
+    student_roll VARCHAR(255) NOT NULL,
+    student_password VARCHAR(255)
+)
+
+CREATE TABLE courses(
+    course_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    course_name VARCHAR(50) NOT NULL,
+    course_credit INT(32) NOT NULL,
+    course_description VARCHAR(255) NOT NULL
+)
+CREATE TABLE teachers(
+    teacher_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+   teacher_name VARCHAR(255) NOT NULL,
+   teacher_email VARCHAR(255) NOT NULL,
+   teacher_mobile VARCHAR(255) NOT NULL
+)
+
+
+CREATE TABLE enrollments(
+enrollment_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+course_id INT REFERENCES courses(course_id),
+student_id INt REFERENCES students(student_id)
+)
+
+CREATE TABLE lectures(
+    lecture_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    lecture_title VARCHAR(90) NOT NULL,
+    lecture_description VARCHAR(255) NOT NULL,
+    course_id INT REFERENCES courses(course_id),
+    teacher_id INT REFERENCES teaches(teacher_id)
+)
+
+CREATE TABLE assigned_courses(
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    teacher_id INT REFERENCES teachers(teacher_id),
+    course_id INT REFERENCES courses(course_id)
+)
+
+
+SELECT enrollments.*, courses.course_name, students.student_name
+FROM enrollments
+JOIN courses ON enrollments.course_id = courses.course_id
+JOIN students ON enrollments.student_id = students.student_id;
+
+
+
+SELECT ROW_NUMBER() OVER (ORDER BY courses.course_name) AS id, courses.course_name, teachers.teacher_name
+FROM assigned_courses
+JOIN courses ON assigned_courses.course_id = courses.course_id
+JOIN teachers ON assigned_courses.teacher_id = teachers.teacher_id ORDER BY courses.course_name;
+
+
+SELECT * FROM courses JOIN assigned_courses on courses.course_id=assigned_courses.course_id GROUP BY course_name ORDER BY courses.course_id;
+
+
+SELECT courses.course_id,courses.course_name FROM courses JOIN assigned_courses on courses.course_id=assigned_courses.course_id GROUP BY course_name ORDER BY courses.course_id;
+
+
+SELECT * FROM teachers WHERE teacher_id  IN (SELECT teacher_id FROM assigned_courses WHERE course_id = :course_id)
+
+
+
+SELECT
+    lectures.lecture_id,
+    courses.course_name,
+    teachers.teacher_name,
+    lectures.lecture_title,
+    lectures.lecture_description
+FROM
+    lectures
+JOIN courses ON lectures.course_id = courses.course_id
+JOIN teachers ON lectures.teacher_id = teachers.teacher_id
+ORDER BY
+    courses.course_name;
+
+
+
+        <?php
+                            if (isset($_SESSION['is_Logged_in'])) {
+                                ?>
+
+                                <?php
+                            }
+                            ?>
